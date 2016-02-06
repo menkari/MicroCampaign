@@ -47,13 +47,13 @@ Simply add in the Facebook App Id and Table name into the variables at the start
 then run the project! You should get a screen which prompts you to log in using Facebook.
 Once logged in, the user's name and email address will be added to the DynamoDB table.
 
-Subsequent page loads will display the new user's details in the list along with their emali 
-and profile picture.
+Subsequent page loads will display the new user's details and a list of all the stored names and
+emails in the dynamodb table.
 
 ## Notes
 
 Make sure you have relevant terms and conditions for storing things like email and ensure that private
-fields are secured stored.
+fields are secured stored and not publicly available.
 
 ## License
 
