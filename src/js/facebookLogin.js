@@ -3,6 +3,23 @@
  */
 
 var _fbAppId = '177876855621874';
+var _campaignName = 'DemoCampaign';
+
+// Retrieves the User Information (FB only at this point)
+function getUserInfo(authResponse) {
+
+    return new Promise(function(resolve, reject){
+
+        FB.api('/me?fields=name,id,email', function (response) {
+            if(response.error){
+                reject(response.error);
+            }else{
+                resolve(response);
+            }
+        });
+
+    });
+}
 
 // This is called with the results from from FB.getLoginStatus().
 function statusChangeCallback(response) {
@@ -26,27 +43,89 @@ function statusChangeCallback(response) {
             }
         });
 
-        // Obtain AWS credentials..
-        AWS.config.credentials.get(function(){
+        // Obtain AWS credentials..and do stuff..
+        AWS.config.credentials.get(function () {
 
             var dynamoDb = new AWS.DynamoDB();
 
             var qryParams = {
-                TableName: 'MicroCampaignPublic'
+                TableName: _campaignName
             };
 
             var list = document.getElementById('list');
 
-            dynamoDb.scan(qryParams, function(error, data){
+            dynamoDb.scan(qryParams, function (error, data) {
                 console.log(data);
-                for(var i = 0; i < data.Count; i++){
+                for (var i = 0; i < data.Count; i++) {
                     var personItem = document.createElement("li");
+                    var personImage = document.createElement("img");
+
                     var personObj = data.Items[i];
-                    personItem.innerHTML = personObj.Name.S +  ' ' + personObj.email.S;
+
+                    personImage.setAttribute("src", "//graph.facebook.com/" + personObj.UserIdentity.S + "/picture");
+                    personImage.setAttribute("alt", "Profile Picture");
+
+                    personItem.innerHTML = personObj.Name.S + ' ' + personObj.Email.S;
+                    personItem.appendChild(personImage);
 
                     list.appendChild(personItem);
                 }
-            })
+            });
+
+            var qryItem = {
+                TableName: _campaignName,
+                Key: {
+                    UserIdentity: {
+                        S: response.authResponse.userID
+                    }
+                }
+            };
+
+            dynamoDb.getItem(qryItem, function (error, data) {
+
+                if(error){
+                    console.log(error, error.stack);
+                }else{
+                    //console.log(Object.keys(data).length === 0);
+
+                    // If the data response is empty, they don't exist
+                    if(Object.keys(data).length != 0){
+                        // They exist!
+                        console.log('User already in dynamo!!');
+                    }else{
+                        // They don't, slap them it dynamo!
+                        getUserInfo(response.authResponse).then(function(userInfo){
+
+                            console.log(userInfo);
+
+                            var putItemParams = {
+                                TableName: _campaignName,
+                                Item: {
+                                    UserIdentity: {
+                                        S: response.authResponse.userID
+                                    },
+                                    Name: {
+                                        S: userInfo.name
+                                    },
+                                    Email: {
+                                        S: userInfo.email
+                                    }
+                                }
+
+                            };
+
+                            dynamoDb.putItem(putItemParams, function(error, result){
+                                if(error) {
+                                    console.log(error, error.stack);
+                                }else{
+                                    console.log('Success!');
+                                }
+                            })
+
+                        });
+                    }
+                }
+            });
 
         });
 
