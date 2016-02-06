@@ -108,7 +108,7 @@ function statusChangeCallback(response) {
                                         S: userInfo.name
                                     },
                                     Email: {
-                                        S: userInfo.email
+                                        S: typeof userInfo.email == 'undefined' ? 'N/A' : userInfo.email
                                     }
                                 }
 
