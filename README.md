@@ -13,7 +13,13 @@ form of data capture, but traditionally this meant some form of intermediary lik
 an API or third party services in order to keep data or access secure. The whole
 point is to provide rich functionality and keep the **COSTS LOW**
 
-Seriously, you could run a single page application like using Angular or React,
+Because services like AWS Cognito use federated logins in order to authenticate
+users, you can furnish your users with a multitude of login options without having
+to write any authentication code yourself (unless you want to that is). The other
+awesome thing is you can push settings to Cognito and they'll be available anywhere
+the user is provided that they use the same login and cognito is implemented.
+
+Seriously, you could run a single page application using Angular or React,
 store the codebase in AWS S3, Azure Blob or Google Cloud Platform Bucket and have
 data persisted like a normal database and run it for less than $5 per month (YMMV).
 
