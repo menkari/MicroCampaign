@@ -42,7 +42,7 @@ Next up you'll need to create a new DynamoDb table, I've chosen **DemoCampaign**
 name just for ease of understanding, call it whatever you want. The table requires a _Key_ 
 and type in "UserIdentity" and set the type as _String_. That's it for the setup.
 Simply add in the Facebook App Id and Table name into the variables at the start of 
-[https://github.com/menkari/MicroCampaign/blob/master/src/js/facebookLogin.js](https://github.com/menkari/MicroCampaign/blob/master/src/js/facebookLogin.js)
+[js/facebookLogin.js](https://github.com/menkari/MicroCampaign/blob/master/src/js/facebookLogin.js).
 
 then run the project! You should get a screen which prompts you to log in using Facebook.
 Once logged in, the user's name and email address will be added to the DynamoDB table.
